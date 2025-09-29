@@ -1,14 +1,8 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class LobbyUI : MonoBehaviour
 {
-    public void Join()
-    {
-        
-    }
     
-    public void Create()
-    {
-        
-    }
+    
 }
