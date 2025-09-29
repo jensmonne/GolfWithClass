@@ -22,6 +22,7 @@ public class GolfNetworkManager : NetworkManager
     }
     
     public void CreateLobby(int maxPlayers) {
+        Debug.Log("Creating lobby...");
         StartRelayHost(maxPlayers, () => {
             Debug.Log("Lobby created.");
             ServerChangeScene("Lobby");
