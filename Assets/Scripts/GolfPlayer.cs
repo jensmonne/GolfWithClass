@@ -9,13 +9,6 @@ public class GolfPlayer : NetworkBehaviour
     public override void OnStartLocalPlayer()
     {
         string defaultName = PlayerPrefs.GetString("PlayerName", $"Player{Random.Range(1000, 9999)}");
-        CmdSetPlayerName(defaultName);
-    }
-    
-    [Command]
-    private void CmdSetPlayerName(string newName)
-    {
-        playerName = newName;
     }
 
     [Command]

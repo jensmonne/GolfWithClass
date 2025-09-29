@@ -13,7 +13,6 @@ public class GolfNetworkManager : NetworkManager
         base.Awake();
         if (Instance == null) {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
         } else {
             Destroy(gameObject);
         }
@@ -61,7 +60,7 @@ public class GolfNetworkManager : NetworkManager
         utp.AllocateRelayServer(maxPlayers, regionId,
             (string joinCode) =>
             {
-                Debug.LogError($"Relay JoinCode: {joinCode}");
+                Debug.Log($"Relay JoinCode: {joinCode}");
                 PlayerPrefs.SetString("RoomCode", joinCode);
                 StartHost();
                 onSuccess?.Invoke();

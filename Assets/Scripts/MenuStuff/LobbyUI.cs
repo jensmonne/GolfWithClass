@@ -36,7 +36,7 @@ public class LobbyUI : MonoBehaviour
         if (playerEntries.TryGetValue(player, out var entry))
         {
             TMP_Text text = entry.GetComponentInChildren<TMP_Text>();
-            text.text = player.isHost ? $"{player.playerName} 👑" : player.playerName;
+            text.text = player.isHost ? $"{player.playerName} (Host)" : player.playerName;
         }
     }
     

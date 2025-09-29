@@ -8,6 +8,18 @@ public class MenuUI : MonoBehaviour
     [SerializeField] private TMP_InputField maxPlayersInput;
     [SerializeField] private TMP_InputField holesInput;
     [SerializeField] private TMP_InputField roomCodeInput;
+    [SerializeField] private TMP_InputField playerNameInput;
+
+    private void Start()
+    {
+        playerNameInput.text = PlayerPrefs.GetString("PlayerName", $"Player{Random.Range(1000,9999)}");
+        playerNameInput.onValueChanged.AddListener(OnValueChanged);
+    }
+
+    private void OnValueChanged(string text)
+    {
+        PlayerPrefs.SetString("PlayerName", text.Trim());
+    }
     
     public void OnJoinButton()
     {
