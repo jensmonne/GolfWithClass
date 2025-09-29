@@ -1,12 +1,14 @@
+using System;
 using Mirror;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Utp;
 
 public class GolfNetworkManager : NetworkManager
 {
+    UtpTransport utp;
+    private string relayJoinCode;
     public static GolfNetworkManager Instance;
-    
-    [HideInInspector] public string currentRoomCode;
     
     private void Awake() {
         if (Instance == null) {
@@ -14,44 +16,81 @@ public class GolfNetworkManager : NetworkManager
         } else {
             Destroy(gameObject);
         }
+        
+        utp = GetComponent<UtpTransport>();
+        if (utp == null) Debug.LogError("UtpTransport is missing.");
     }
     
-    public void CreateLobby() {
-        StartHost();
-        currentRoomCode = GenerateRoomCode();
-        Debug.Log("Created Lobby with Code: " + currentRoomCode);
-        ServerChangeScene("Lobby");
+    public void CreateLobby(int maxPlayers) {
+        StartRelayHost(maxPlayers, () => {
+            Debug.Log("Lobby created.");
+            ServerChangeScene("Lobby");
+        });
     }
-    
-    public void JoinLobby(string roomCode) {
-        // For now, map any roomCode -> localhost
-        // Later you can hook this up to a real room resolver
-        networkAddress = "localhost";
-        StartClient();
-        Debug.Log("Joining Lobby with Code: " + roomCode);
+
+    public void JoinLobby(string joinCode) {
+        JoinRelayServer(joinCode);
+        Debug.Log($"Joining lobby with code {joinCode}");
     }
-    
+
     public void LeaveLobby() {
         if (NetworkServer.active && NetworkClient.isConnected) {
             StopHost();
         } else if (NetworkClient.isConnected) {
             StopClient();
         }
+
         SceneManager.LoadScene("MainMenu");
     }
-    
+
     public void StartGame() {
         if (NetworkServer.active) {
             ServerChangeScene("SampleScene");
         }
     }
+    
+    private void StartRelayHost(int maxPlayers, Action onSuccess, string regionId = null)
+    {
+        utp.useRelay = true;
+        utp.AllocateRelayServer(maxPlayers, regionId,
+            (string joinCode) =>
+            {
+                relayJoinCode = joinCode;
+                Debug.LogError($"Relay JoinCode: {joinCode}");
+                PlayerPrefs.SetString("RoomCode", joinCode);
+                StartHost();
+                onSuccess?.Invoke();
+            },
+            () =>
+            {
+                UtpLog.Error($"Failed to start a Relay host.");
+            });
+    }
+    
+    private void JoinRelayServer(string joinCode)
+    {
+        utp.useRelay = true;
+        utp.ConfigureClientWithJoinCode(joinCode,
+        () =>
+        {
+            StartClient();
+        },
+        () =>
+        {
+            UtpLog.Error($"Failed to join Relay server.");
+        });
+    }
 
-    private string GenerateRoomCode() {
-        const string chars = "123456789";
-        string code = "";
-        for (int i = 0; i < 6; i++) {
-            code += chars[Random.Range(0, chars.Length)];
-        }
-        return code;
+    public override void OnStopServer()
+    {
+        relayJoinCode = null;
+        base.OnStopServer();
+    }
+    
+    public override void OnClientDisconnect()
+    {
+        base.OnClientDisconnect();
+        Debug.Log("Disconnected from server. Returning to main menu...");
+        SceneManager.LoadScene("MainMenu");
     }
 }
