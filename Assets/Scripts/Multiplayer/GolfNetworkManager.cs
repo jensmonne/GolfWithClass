@@ -7,12 +7,13 @@ using Utp;
 public class GolfNetworkManager : NetworkManager
 {
     UtpTransport utp;
-    private string relayJoinCode;
     public static GolfNetworkManager Instance;
-    
-    private void Awake() {
+
+    public override void Awake() {
+        base.Awake();
         if (Instance == null) {
             Instance = this;
+            DontDestroyOnLoad(gameObject);
         } else {
             Destroy(gameObject);
         }
@@ -26,6 +27,9 @@ public class GolfNetworkManager : NetworkManager
         StartRelayHost(maxPlayers, () => {
             Debug.Log("Lobby created.");
             ServerChangeScene("Lobby");
+            int holes = PlayerPrefs.GetInt("Holes", 1);
+            LevelManager.Instance.SetupLevelList(holes);
+            
         });
     }
 
@@ -45,8 +49,9 @@ public class GolfNetworkManager : NetworkManager
     }
 
     public void StartGame() {
-        if (NetworkServer.active) {
-            ServerChangeScene("SampleScene");
+        if (NetworkServer.active)
+        {
+            LevelManager.Instance.LoadNextLevel();
         }
     }
     
@@ -56,7 +61,6 @@ public class GolfNetworkManager : NetworkManager
         utp.AllocateRelayServer(maxPlayers, regionId,
             (string joinCode) =>
             {
-                relayJoinCode = joinCode;
                 Debug.LogError($"Relay JoinCode: {joinCode}");
                 PlayerPrefs.SetString("RoomCode", joinCode);
                 StartHost();
@@ -64,7 +68,7 @@ public class GolfNetworkManager : NetworkManager
             },
             () =>
             {
-                UtpLog.Error($"Failed to start a Relay host.");
+                UtpLog.Error("Failed to start a Relay host.");
             });
     }
     
@@ -78,14 +82,8 @@ public class GolfNetworkManager : NetworkManager
         },
         () =>
         {
-            UtpLog.Error($"Failed to join Relay server.");
+            UtpLog.Error("Failed to join Relay server.");
         });
-    }
-
-    public override void OnStopServer()
-    {
-        relayJoinCode = null;
-        base.OnStopServer();
     }
     
     public override void OnClientDisconnect()

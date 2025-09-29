@@ -108,7 +108,7 @@ namespace Utp
 			}
 			if (OnServerDataReceived == null)
 			{
-				OnServerDataReceived = (connId, data, channel) => UtpLog.Warning("OnServerDataReceived called with no handler");
+				//OnServerDataReceived = (connId, data, channel) => UtpLog.Warning("OnServerDataReceived called with no handler");
 			}
 			if (OnClientConnected == null)
 			{

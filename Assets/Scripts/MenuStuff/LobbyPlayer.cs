@@ -14,8 +14,8 @@ public class LobbyPlayer : NetworkBehaviour
     public override void OnStartClient()
     {
         base.OnStartClient();
-        lobbyUI = FindObjectOfType<LobbyUI>();
-        lobbyUI.AddPlayer(this);
+        lobbyUI = FindFirstObjectByType<LobbyUI>();
+        //lobbyUI.AddPlayer(this);
     }
 
     public override void OnStopClient()

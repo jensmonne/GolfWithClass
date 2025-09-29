@@ -6,6 +6,7 @@ public class MenuUI : MonoBehaviour
     [SerializeField] private GameObject joinMenu;
     [SerializeField] private GameObject createMenu;
     [SerializeField] private TMP_InputField maxPlayersInput;
+    [SerializeField] private TMP_InputField holesInput;
     [SerializeField] private TMP_InputField roomCodeInput;
     
     public void OnJoinButton()
@@ -40,6 +41,8 @@ public class MenuUI : MonoBehaviour
     
     public void OnCreateConfirm()
     {
+        int holes = int.Parse(holesInput.text.Trim());
+        PlayerPrefs.SetInt("holes", holes);
         int maxPlayers = int.Parse(maxPlayersInput.text.Trim());
         GolfNetworkManager.Instance.CreateLobby(maxPlayers);
     }
