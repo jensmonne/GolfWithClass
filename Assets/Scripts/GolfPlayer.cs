@@ -1,4 +1,5 @@
 using Mirror;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -12,6 +13,7 @@ public class GolfPlayer : NetworkBehaviour
     
     [SyncVar] public int score;
 
+    private CinemachineVirtualCamera vcam;
     private LobbyUI lobbyUI;
 
     public override void OnStartClient()
@@ -27,12 +29,14 @@ public class GolfPlayer : NetworkBehaviour
         base.OnStopClient();
         if (lobbyUI != null)
             lobbyUI.RemovePlayer(this);
+        if (vcam != null)
+            vcam.gameObject.SetActive(false);
     }
 
     public override void OnStartLocalPlayer()
     {
         base.OnStartLocalPlayer();
-
+        
         if (isServer && isLocalPlayer)
         {
             CmdSetHost(true);
@@ -40,6 +44,13 @@ public class GolfPlayer : NetworkBehaviour
 
         string defaultName = PlayerPrefs.GetString("PlayerName", $"Player{Random.Range(1000,9999)}");
         CmdSetPlayerName(defaultName);
+        
+        vcam = GetComponentInChildren<CinemachineVirtualCamera>(true);
+        if (vcam != null)
+        {
+            vcam.Priority = 10;
+            vcam.gameObject.SetActive(true);
+        }
     }
     
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
