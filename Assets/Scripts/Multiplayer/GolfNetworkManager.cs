@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -8,6 +9,8 @@ public class GolfNetworkManager : NetworkManager
 {
     UtpTransport utp;
     public static GolfNetworkManager Instance;
+    private List<Transform> spawnPoints = new List<Transform>();
+    private int nextIndex = 0;
 
     public override void Awake() {
         base.Awake();
@@ -90,5 +93,29 @@ public class GolfNetworkManager : NetworkManager
         base.OnClientDisconnect();
         Debug.Log("Disconnected from server. Returning to main menu...");
         SceneManager.LoadScene("MainMenu");
+    }
+    
+    public override void OnServerSceneChanged(string sceneName)
+    {
+        base.OnServerSceneChanged(sceneName);
+
+        spawnPoints.Clear();
+
+        foreach (var sp in FindObjectsOfType<SpawnPoint>())
+        {
+            spawnPoints.Add(sp.transform);
+        }
+
+        nextIndex = 0;
+    }
+    
+    public override Transform GetStartPosition()
+    {
+        if (spawnPoints.Count == 0)
+            return base.GetStartPosition();
+
+        Transform spawn = spawnPoints[nextIndex % spawnPoints.Count];
+        nextIndex++;
+        return spawn;
     }
 }
