@@ -13,7 +13,7 @@ public class GolfPlayer : NetworkBehaviour
     
     [SyncVar] public int score;
 
-    private CinemachineVirtualCamera vcam;
+    private CinemachineCamera vcam;
     private LobbyUI lobbyUI;
 
     public override void OnStartClient()
@@ -23,14 +23,17 @@ public class GolfPlayer : NetworkBehaviour
 
         HandleScene(SceneManager.GetActiveScene().name);
     }
-
+    
     public override void OnStopClient()
     {
         base.OnStopClient();
         if (lobbyUI != null)
             lobbyUI.RemovePlayer(this);
         if (vcam != null)
-            vcam.gameObject.SetActive(false);
+            vcam.enabled = false;
+        var listener = GetComponentInChildren<AudioListener>();
+        if (listener != null)
+            listener.enabled = false;
     }
 
     public override void OnStartLocalPlayer()
@@ -45,12 +48,16 @@ public class GolfPlayer : NetworkBehaviour
         string defaultName = PlayerPrefs.GetString("PlayerName", $"Player{Random.Range(1000,9999)}");
         CmdSetPlayerName(defaultName);
         
-        vcam = GetComponentInChildren<CinemachineVirtualCamera>(true);
+        vcam = GetComponentInChildren<CinemachineCamera>(true);
         if (vcam != null)
         {
             vcam.Priority = 10;
-            vcam.gameObject.SetActive(true);
+            vcam.enabled = true;
         }
+        
+        var listener = GetComponentInChildren<AudioListener>(true);
+        if (listener != null)
+            listener.enabled = true;
     }
     
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
