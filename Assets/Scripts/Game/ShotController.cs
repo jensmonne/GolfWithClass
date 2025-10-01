@@ -100,14 +100,13 @@ public class ShotController : NetworkBehaviour
         if (powerBar != null) powerBar.fillAmount = 0f;
 
         Vector3 dir = transform.forward; 
-        CmdShoot(shotPower, dir);
-        Debug.Log("SHOT FIRED, GET DOWN GENERAL");
+        ShootBall(shotPower, dir);
         shotPower = 0f;
     }
 
-    [Command]
-    private void CmdShoot(float power, Vector3 direction)
+    private void ShootBall(float power, Vector3 direction)
     {
+        Debug.Log("SHOT FIRED, GET DOWN GENERAL");
         if (ballRigidbody == null) return;
         ballRigidbody.linearVelocity = Vector3.zero;
         ballRigidbody.angularVelocity = Vector3.zero;
