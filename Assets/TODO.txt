@@ -3,3 +3,5 @@ TODO List
 Color picking
 
 Custom player names
+
+"Enter text" change In menu
