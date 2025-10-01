@@ -99,7 +99,7 @@ public class ShotController : NetworkBehaviour
         isDragging = false;
         if (powerBar != null) powerBar.fillAmount = 0f;
 
-        Vector3 dir = camera.transform.forward;
+        Vector3 dir = transform.forward; 
         CmdShoot(shotPower, dir);
         Debug.Log("SHOT FIRED, GET DOWN GENERAL");
         shotPower = 0f;
