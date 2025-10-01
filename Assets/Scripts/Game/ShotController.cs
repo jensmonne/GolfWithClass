@@ -3,16 +3,18 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-public class GolfShotController : NetworkBehaviour
+public class ShotController : NetworkBehaviour
 {
     [Header("Shot")]
     [SerializeField] Rigidbody ballRigidbody;
     [SerializeField] float minPower = 5f;
     [SerializeField] float maxPower = 30f;
-    [SerializeField] float powerMultiplier = 0.1f;
+    [SerializeField] float powerMultiplier = 0.05f;
 
     [Header("UI")]
     [SerializeField] Image powerBar; // fill image
+
+    [SerializeField] private Camera camera;
 
     // runtime
     private PlayerInput playerInput;
@@ -22,14 +24,11 @@ public class GolfShotController : NetworkBehaviour
     private Vector2 dragStartPos;
     private float shotPower;
     private bool isDragging;
-    private Camera mainCam;
 
-    void Awake()
+    private void Awake()
     {
         playerInput = GetComponent<PlayerInput>();
-        if (playerInput == null) Debug.LogError("PlayerInput missing on prefab.");
 
-        // Find actions by name (these names must match the actions in your asset)
         clickAction  = playerInput?.actions?.FindAction("Click");
         pointAction  = playerInput?.actions?.FindAction("Point");
 
@@ -37,7 +36,7 @@ public class GolfShotController : NetworkBehaviour
         if (pointAction == null) Debug.LogWarning("Point action not found. Make sure action name is 'Point'.");
     }
 
-    void OnEnable()
+    private void OnEnable()
     {
         if (clickAction != null)
         {
@@ -46,7 +45,7 @@ public class GolfShotController : NetworkBehaviour
         }
     }
 
-    void OnDisable()
+    private void OnDisable()
     {
         if (clickAction != null)
         {
@@ -57,24 +56,34 @@ public class GolfShotController : NetworkBehaviour
 
     public override void OnStartLocalPlayer()
     {
-        mainCam = Camera.main;
+        if (!camera) Debug.LogError("Main camera missing on prefab.");
         if (powerBar != null) powerBar.fillAmount = 0f;
-
-        // Optional: ensure the PlayerInput's action map is enabled for this player
-        // playerInput?.ActivateInput();
     }
 
-    void Update()
+    private void Update()
     {
         if (!isLocalPlayer || !isDragging) return;
         if (pointAction == null) return;
+        
+        Vector3 camForward = camera.transform.forward;
+        camForward.y = 0f;
+        if (camForward.sqrMagnitude > 0.001f)
+            transform.rotation = Quaternion.LookRotation(camForward);
 
         Vector2 currentPos = pointAction.ReadValue<Vector2>();
-        float dragDistance = (currentPos.y - dragStartPos.y) * -1f; // down = positive
-        shotPower = Mathf.Clamp(dragDistance * powerMultiplier, minPower, maxPower);
+        float deltaY = currentPos.y - dragStartPos.y;
+
+        if (deltaY > 0f)
+        {
+            shotPower = Mathf.Clamp(deltaY * powerMultiplier, minPower, maxPower);
+        }
+        else
+        {
+            shotPower = 0f;
+        }
 
         float normalizedPower = (shotPower - minPower) / (maxPower - minPower);
-        if (powerBar != null) powerBar.fillAmount = normalizedPower;
+        if (powerBar != null) powerBar.fillAmount = Mathf.Clamp01(normalizedPower);
     }
 
     private void OnClickStarted(InputAction.CallbackContext ctx)
@@ -90,9 +99,9 @@ public class GolfShotController : NetworkBehaviour
         isDragging = false;
         if (powerBar != null) powerBar.fillAmount = 0f;
 
-        // direction choice: camera forward for now (flatten if you want)
-        Vector3 dir = mainCam.transform.forward;
+        Vector3 dir = camera.transform.forward;
         CmdShoot(shotPower, dir);
+        Debug.Log("SHOT FIRED, GET DOWN GENERAL");
         shotPower = 0f;
     }
 

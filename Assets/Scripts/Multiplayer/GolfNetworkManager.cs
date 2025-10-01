@@ -31,7 +31,6 @@ public class GolfNetworkManager : NetworkManager
             ServerChangeScene("Lobby");
             int holes = PlayerPrefs.GetInt("Holes", 1);
             LevelManager.Instance.SetupLevelList(holes);
-            
         });
     }
 
@@ -88,6 +87,17 @@ public class GolfNetworkManager : NetworkManager
         });
     }
     
+    public override void OnServerAddPlayer(NetworkConnectionToClient conn)
+    {
+        if (conn.identity != null)
+        {
+            Debug.LogWarning($"Player already exists for connection {conn.connectionId}, skipping spawn.");
+            return;
+        }
+
+        base.OnServerAddPlayer(conn);
+    }
+    
     public override void OnClientDisconnect()
     {
         base.OnClientDisconnect();
@@ -101,8 +111,8 @@ public class GolfNetworkManager : NetworkManager
 
         spawnPoints.Clear();
 
-        foreach (var sp in FindObjectsOfType<SpawnPoint>())
-        {
+        foreach (var sp in FindObjectsByType<SpawnPoint>(FindObjectsSortMode.None))
+        {   
             spawnPoints.Add(sp.transform);
         }
 

@@ -1,0 +1,55 @@
+{
+    "version": 1,
+    "name": "GolfInput",
+    "maps": [
+        {
+            "name": "Ball",
+            "id": "0c1fc391-9f61-40fa-a813-2ef92fa9c180",
+            "actions": [
+                {
+                    "name": "Click",
+                    "type": "Button",
+                    "id": "ae347d19-e299-4d8f-86ec-b8228be845c8",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Point",
+                    "type": "Value",
+                    "id": "8e72c361-d37f-48ec-94ad-9445be3755f9",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "df67deaf-8fba-43ec-9056-c6c709ee5934",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Click",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1c7935b2-1d5b-4d42-a110-db5cf84bb04b",
+                    "path": "<Mouse>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Point",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
