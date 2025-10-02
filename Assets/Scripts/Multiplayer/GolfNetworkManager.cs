@@ -26,12 +26,18 @@ public class GolfNetworkManager : NetworkManager
     
     public void CreateLobby(int maxPlayers) {
         Debug.Log("Creating lobby...");
+        LoadingUI.Instance.Show();
         StartRelayHost(maxPlayers, () => {
-            Debug.Log("Lobby created.");
-            ServerChangeScene("Lobby");
-            int holes = PlayerPrefs.GetInt("Holes", 1);
-            LevelManager.Instance.SetupLevelList(holes);
+            LoadingUI.Instance.AnimationSceneSwitchIn();
         });
+    }
+
+    public void OnZoomInComplete()
+    {
+        Debug.Log("Zoomin complete");
+        ServerChangeScene("Lobby");
+        int holes = PlayerPrefs.GetInt("Holes", 1);
+        LevelManager.Instance.SetupLevelList(holes);
     }
 
     public void JoinLobby(string joinCode) {
