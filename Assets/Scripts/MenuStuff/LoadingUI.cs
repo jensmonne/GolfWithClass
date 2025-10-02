@@ -5,6 +5,7 @@ public class LoadingUI : MonoBehaviour
 {
     [SerializeField] private Animator golfball;
     [SerializeField] private Animator loadingCircle;
+    [SerializeField] private GameObject loadingImage;
 
     public static LoadingUI Instance;
 
@@ -40,7 +41,7 @@ public class LoadingUI : MonoBehaviour
     //Start loading animation
     public void Show()
     {
-        gameObject.SetActive(true);
+        loadingImage.SetActive(true);
         golfball.SetTrigger("Loading");
         loadingCircle.SetTrigger("Loading");
     }
@@ -48,7 +49,7 @@ public class LoadingUI : MonoBehaviour
     //stop loading animation
     public void Hide()
     {
-        gameObject.SetActive(false);
+        loadingImage.SetActive(false);
     }
 
     //start zoom in animation
