@@ -436,7 +436,7 @@ GameObject:
   - component: {fileID: 8031250234860299757}
   - component: {fileID: 3867908635326470408}
   m_Layer: 3
-  m_Name: NetworkPlayer
+  m_Name: NetworkPlayer 1
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

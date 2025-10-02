@@ -1,9 +1,8 @@
-using Mirror;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-public class ShotController : NetworkBehaviour
+public class ShotController : MonoBehaviour
 {
     [Header("Shot")]
     [SerializeField] Rigidbody ballRigidbody;
@@ -54,15 +53,9 @@ public class ShotController : NetworkBehaviour
         }
     }
 
-    public override void OnStartLocalPlayer()
-    {
-        if (!camera) Debug.LogError("Main camera missing on prefab.");
-        if (powerBar != null) powerBar.fillAmount = 0f;
-    }
-
     private void Update()
     {
-        if (!isLocalPlayer || !isDragging) return;
+        if (!isDragging) return;
         if (pointAction == null) return;
         
         Vector3 camForward = camera.transform.forward;
@@ -88,14 +81,14 @@ public class ShotController : NetworkBehaviour
 
     private void OnClickStarted(InputAction.CallbackContext ctx)
     {
-        if (!isLocalPlayer || pointAction == null) return;
+        if (pointAction == null) return;
         dragStartPos = pointAction.ReadValue<Vector2>();
         isDragging = true;
     }
 
     private void OnClickReleased(InputAction.CallbackContext ctx)
     {
-        if (!isLocalPlayer || !isDragging) return;
+        if (!isDragging) return;
         isDragging = false;
         if (powerBar != null) powerBar.fillAmount = 0f;
 

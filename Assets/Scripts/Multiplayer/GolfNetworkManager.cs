@@ -24,11 +24,12 @@ public class GolfNetworkManager : NetworkManager
         if (utp == null) Debug.LogError("UtpTransport is missing.");
     }
     
-    public void CreateLobby(int maxPlayers) {
+    public void CreateLobby(int maxPlayers, Action onSuccess) {
         Debug.Log("Creating lobby...");
         LoadingUI.Instance.Show();
         StartRelayHost(maxPlayers, () => {
             LoadingUI.Instance.AnimationSceneSwitchIn();
+            onSuccess.Invoke();
         });
     }
 
