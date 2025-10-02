@@ -1,11 +1,10 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 public class LoadingUI : MonoBehaviour
 {
-    [SerializeField] private Animator Golfball;
-    [SerializeField] private Animator LoadingCircle;
+    [SerializeField] private Animator golfball;
+    [SerializeField] private Animator loadingCircle;
 
     public static LoadingUI Instance;
 
@@ -32,18 +31,18 @@ public class LoadingUI : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
-    void Start()
+    private void Start()
     {
-        Hide();
-        Debug.Log($"Instance = {Instance}, Golfball = {Golfball}, LoadingCircle = {LoadingCircle}");
+        //Hide();
+        Debug.Log($"Instance = {Instance}, Golfball = {golfball}, LoadingCircle = {loadingCircle}");
     }
 
     //Start loading animation
     public void Show()
     {
         gameObject.SetActive(true);
-        Golfball.SetTrigger("Loading");
-        LoadingCircle.SetTrigger("Loading");
+        golfball.SetTrigger("Loading");
+        loadingCircle.SetTrigger("Loading");
     }
 
     //stop loading animation
@@ -55,14 +54,14 @@ public class LoadingUI : MonoBehaviour
     //start zoom in animation
     public void AnimationSceneSwitchIn()
     {
-        Golfball.SetTrigger("Zoomin");
-        LoadingCircle.enabled = false;
+        golfball.SetTrigger("Zoomin");
+        loadingCircle.enabled = false;
     }
 
     //start zoom out animation
     public void AnimationSceneSwitchOut()
     {
-        Golfball.SetTrigger("Zoomout");
+        golfball.SetTrigger("Zoomout");
     }
 
     //called by animation event "Zoonin" (In CompleteAnim.cs)
@@ -82,5 +81,4 @@ public class LoadingUI : MonoBehaviour
     {
         AnimationSceneSwitchOut();
     }
-
 }
