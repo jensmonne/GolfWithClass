@@ -56,7 +56,7 @@ public class LoadingUI : MonoBehaviour
     public void AnimationSceneSwitchIn()
     {
         golfball.SetTrigger("Zoomin");
-        loadingCircle.enabled = false;
+        loadingCircle.gameObject.SetActive(false);
     }
 
     //start zoom out animation
